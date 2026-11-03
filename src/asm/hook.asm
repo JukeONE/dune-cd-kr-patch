@@ -66,9 +66,14 @@ big_draw:
     mov bx,[0xd82e]
     mov bp,sp
     cmp bx,150                ; upper screen: dialogue subtitles -> Dalmoori 8px
-    jb .dal
+    jae .lower
+    cmp word [ss:bp+20],0xd1cf   ; simple string printer (map tooltip etc.) -> 7px menu font
+    je .menu7
+    jmp .dal
+.lower:
     cmp word [ss:bp+20],0x8c45   ; lower screen via text layout loop (intro text) -> Galmuri 9px
     je .big9
+.menu7:
     ; ---- menu / UI: 7px glyph, advance 8 ----
     add word [0xd82c],8
     mov ax,[0xdbe4]
