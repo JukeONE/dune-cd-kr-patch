@@ -141,7 +141,7 @@ def main():
     # font widths
     fnt = bytearray(open(os.path.join(X, 'DNCHAR.BIN'), 'rb').read())
     for c in LEADS: fnt[c] = 0; fnt[128 + c] = 0
-    for c in TRAILS: fnt[c] = 10; fnt[128 + c] = 8
+    for c in TRAILS: fnt[c] = 10; fnt[128 + c] = 10
     files['DNCHAR.BIN'] = bytes(fnt)
 
     # hook segment
