@@ -37,6 +37,13 @@ if (-not $dosbox) {
     Write-Host '완료.' -ForegroundColor Green
 }
 
+# 창 크기 설정 (Dune_Window.bat 으로 변경)
+$WinFile = Join-Path $Tools 'window.txt'
+$Win = 'large'
+if (Test-Path $WinFile) { $Win = (Get-Content $WinFile -Raw).Trim() }
+$Full = 'false'
+if ($Win -eq 'fullscreen') { $Full = 'true'; $Win = 'large' }
+
 $Prog = if (Test-Path (Join-Path $Game 'DNCDKO.EXE')) { 'DNCDKO' } else { 'DNCDPRG' }
 
 # 세이브 폴더 (DOS 안에서는 C:\DUNECD\ 로 보임)
@@ -44,8 +51,8 @@ New-Item -ItemType Directory -Force -Path (Join-Path $Save 'DUNECD') | Out-Null
 
 $ConfText = @"
 [sdl]
-fullscreen = false
-window_size = large
+fullscreen = $Full
+window_size = $Win
 
 [render]
 aspect = true
