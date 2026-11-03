@@ -56,7 +56,7 @@ python src/tools/build.py                          # out/ 에 패치 파일 생�
 python src/tools/mkpatch.py kopatch/patch.json     # 설치기용 차이 데이터 생성
 ```
 
-번역 수정은 `src/ko/*.txt`(번호<TAB>문장)를 고친 뒤 다시 빌드하면 됩니다.
+번역 수정은 `src/ko/*.txt`(한 줄에 `번호 + 탭 + 문장`)를 고친 뒤 다시 빌드하면 됩니다.
 `src/font/`의 갈무리 BDF는 현재 번역에 쓰인 글자만 담은 축소판입니다. 새 글자를 쓰려면 [갈무리 저장소](https://github.com/quiple/galmuri)의 `Galmuri7.bdf`, `Galmuri9.bdf`로 바꿔 주세요.
 새 음절이 생기면 달무리 글자 생성에 Node.js 22 이상과 [달무리 저장소](https://github.com/RanolP/dalmoori-font)가 필요합니다(`DALMOORI_GLYPH` 환경 변수로 경로 지정).
 
