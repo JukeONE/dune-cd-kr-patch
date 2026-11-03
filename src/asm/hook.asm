@@ -210,3 +210,62 @@ small_draw:
     pop bx
     pop ax
     retf
+
+; ---------------- line centering for lower-screen text (replaces 0x8BD1..0x8BE8) ----------------
+; in: cx = words on this line, DS:SI = line text, [0xd82c] = line start x
+center_line:
+    push ax
+    push bx
+    push cx
+    push dx
+    push si
+    push di
+    cmp word [0xd82e],150       ; only text drawn in the lower screen
+    jb .out
+    test byte [0x4799],0x02     ; game's own centering already applied
+    jnz .out
+    jcxz .out
+    mov bx,[0x47a0]
+    xor di,di
+.ch:
+    lodsb
+    cmp al,0x20
+    je .gap
+    cmp al,0x0d
+    je .gap
+    test al,0x80
+    jnz .measured
+    cmp al,0x09
+    jb .ch
+    xlatb
+    xor ah,ah
+    add di,ax
+    jmp .ch
+.gap:
+    dec cx
+    jz .measured
+    add di,6
+.skip:
+    cmp byte [si],0x20
+    je .adv
+    cmp byte [si],0x0d
+    jne .ch
+.adv:
+    inc si
+    jmp .skip
+.measured:
+    mov ax,[0x478f]
+    sub ax,di
+    jle .out
+    shr ax,1
+    add [0xd82c],ax
+.out:
+    mov word [0x479c],0
+    pop di
+    pop si
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    mov dx,6
+    retf

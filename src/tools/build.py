@@ -153,7 +153,7 @@ def main():
     open(os.path.join(asm, 'g9l.bin'), 'wb').write(L); open(os.path.join(asm, 'g9r.bin'), 'wb').write(R); open(os.path.join(asm, 'g7.bin'), 'wb').write(S)
     with open(os.path.join(asm, 'tables.inc'), 'w') as f:
         f.write('NT equ %d\n' % NT)
-        f.write('dw big_draw, small_draw\n')
+        f.write('dw big_draw, small_draw, center_line\n')
         f.write('leadtab: db %s\n' % ','.join(map(str, lt)))
         f.write('trailtab: db %s\n' % ','.join(map(str, tt)))
         f.write('g9l: incbin "g9l.bin"\ng9r: incbin "g9r.bin"\ng7: incbin "g7.bin"\ng7b: incbin "g7b.bin"\ngd: incbin "gd.bin"\n')
@@ -163,7 +163,7 @@ def main():
     def sym(name):
         m = re.search(r'^\s*\d+\s+([0-9A-F]{8})\s+(?:\S+\s+)?%s:' % name, lst, re.M)
         return int(m.group(1), 16)
-    big, small = struct.unpack_from('<HH', hook, 0)
+    big, small, cline = struct.unpack_from('<HHH', hook, 0)
 
     # EXE patch
     exe = bytearray(open(os.path.join(ROOT, 'orig', 'dncdprg.exe'), 'rb').read())
@@ -185,12 +185,15 @@ def main():
         img[at:at+8] = il * 4
     # left-align dialogue: no extra space distribution (space = 6px, remainder 0)
     patch(0x8C2A, bytes.fromhex('03162cd8833e9c4700740542ff0e9c47'), bytes.fromhex('ba0600') + bytes.fromhex('03162cd8') + b'\x90' * 9)
+    # lower-screen text: centre each line (dialogue stays left-aligned)
+    patch(0x8BD1, bytes.fromhex('58503d01007407f6069947017506ba0600bb0000891e9c47'),
+          b'\x9a' + struct.pack('<HH', cline, SEGPARA) + b'\xeb\x11' + b'\x90' * 17)
     hook_paras = (len(hook) + 15) >> 4
     patch(0xE5AE, bytes.fromhex('b91ddde84b0b'), b'\x81\x06\xb9\x39' + struct.pack('<H', 0xDD2 + hook_paras + 1))
     # header
     h = bytearray(exe[:hdr])
     nrel, relo = struct.unpack_from('<H', h, 6)[0], struct.unpack_from('<H', h, 0x18)[0]
-    for off in (0xD096 + 3, 0xD12F + 3):
+    for off in (0xD096 + 3, 0xD12F + 3, 0x8BD1 + 3):
         struct.pack_into('<HH', h, relo + 4 * nrel, off, 0); nrel += 1
     assert relo + 4 * nrel <= hdr
     struct.pack_into('<H', h, 6, nrel)
