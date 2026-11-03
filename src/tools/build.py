@@ -138,6 +138,11 @@ def main():
     ir = irul.build(il, g9i, a9i); c = hsq.hsq_literal(ir); assert hsq.unhsq(c) == ir
     files['IRUL1.HSQ'] = c; files['IRUL4.HSQ'] = c
 
+    import mixr
+    mx, _ = mixr.build(os.path.join(U, 'MIXR.BIN'), os.path.join(ROOT, 'font/Galmuri7.bdf'))
+    c = hsq.hsq_literal(mx); assert hsq.unhsq(c) == mx
+    files['MIXR.HSQ'] = c
+
     # font widths
     fnt = bytearray(open(os.path.join(X, 'DNCHAR.BIN'), 'rb').read())
     for c in LEADS: fnt[c] = 0; fnt[128 + c] = 0
