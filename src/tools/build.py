@@ -139,7 +139,7 @@ def main():
     files['IRUL1.HSQ'] = c; files['IRUL4.HSQ'] = c
 
     import mixr
-    mx, _ = mixr.build(os.path.join(U, 'MIXR.BIN'), os.path.join(ROOT, 'font/Galmuri7.bdf'))
+    mx, _ = mixr.build(os.path.join(U, 'MIXR.BIN'), os.path.join(ROOT, 'font/dalmoori8.json'))
     c = hsq.hsq_literal(mx); assert hsq.unhsq(c) == mx
     files['MIXR.HSQ'] = c
 
