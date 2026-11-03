@@ -1,0 +1,13 @@
+launcher/
+SAVE/
+DNCDKO.EXE
+kopatch/dune_dat_index.bak
+src/x/
+src/u/
+src/orig/
+src/out/
+src/asm/*.bin
+src/asm/*.lst
+src/asm/tables.inc
+src/dalgen/*.json
+__pycache__/
