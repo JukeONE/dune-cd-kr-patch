@@ -193,6 +193,9 @@ def main():
     # lower-screen text: centre each line (dialogue stays left-aligned)
     patch(0x8BD1, bytes.fromhex('58503d01007407f6069947017506ba0600bb0000891e9c47'),
           b'\x9a' + struct.pack('<HH', cline, SEGPARA) + b'\xeb\x11' + b'\x90' * 17)
+    # 믹서 패널: 자막 옵션 3개를 7px 2칸(14px) 간격으로 (클릭 행 매핑 + 그리기 행)
+    patch(DSB + 0x28cf, bytes([0,3,1,2,4,5,6,7,7,7,8,9,10]), bytes([0,3,1,2,4,5,6,8,8,9,9,10,10]))
+    patch(DSB + 0x28dc + 8, bytes([10,11,12]), bytes([7,9,11]))
     hook_paras = (len(hook) + 15) >> 4
     patch(0xE5AE, bytes.fromhex('b91ddde84b0b'), b'\x81\x06\xb9\x39' + struct.pack('<H', 0xDD2 + hook_paras + 1))
     # header

@@ -121,6 +121,7 @@ def textd(J,text,drop=None):
                 if r[i]: pts.append((x+i,y))
         x+=9 if drop is not None else 8
     return pts,max(p[0] for p in pts)+1
+UNSEL=0xB
 def build(src,fontfn):
     d=open(src,'rb').read()
     t,offs=sheet(d); S=[dec(d,o) for o in offs]
@@ -143,35 +144,34 @@ def build(src,fontfn):
     label([(4,44,25,33)],5,[('음성',24)])
     label([(45,72,15,25)],6,[('음악',15)])
     label([(73,117,15,25),(73,133,26,33)],6,[('음성 중',15),('음악',24)])
-    # ---- subtitle buttons 44..49 (sel/unsel pairs)
-    texts={44:'자막',45:'자막',46:'말풍선',47:'말풍선',48:'자막없음',49:'자막없음'}
-    selgrad=[0xF,0xF,0xE,0xE,0xC,0xC,0xA]
-    origs={i:[r[:] for r in S[i]['rows']] for i in texts}
-    for i,text in texts.items():
-        R=S[i]['rows']; w=S[i]['w']
-        U=origs[i|1]
-        inner=[x for x in range(w) if U[0][x]==3 and U[6][x]==3]
-        txt=[x for x in inner if any(U[y][x]!=3 for y in range(7))]
-        ta,tb=min(txt),max(txt)
-        for y in range(7):
-            for x in range(ta,tb+1): R[y][x]=3
-        a,b=min(inner),max(inner)
-        pts,tw=textd(J,text,DROP6)
-        left=(a+b+1-tw)//2
+    # ---- 자막 옵션 3개: 실행파일 패치로 7px 2칸(14px) 간격으로 재배치
+    #   그리기: 행 7/9/11 (패널 y 88/102/116), 클릭: 행 7-8/9-10/11-12
+    BX,BW,BH=134,65,14
+    BANDS=[88,102,116]; TOFF=3; CX=167
+    texts=['자막','말풍선','자막없음']
+    selgrad=[0xF,0xF,0xE,0xE,0xC,0xC,0xA,0xA]
+    for y in range(88,137):
+        for x in range(BX,BX+BW):
+            if P[y][x]==8: P[y][x]=3
+    clean=[r[:] for r in P]
+    def put(rows,ox,oy,text,sel):
+        pts,tw=textd(J,text); left=CX-tw//2
         for px,py in pts:
-            R[py+1][left+px]= selgrad[py+1] if i%2==0 else 8
-    # paste unselected versions into panel where originals match
-    for i in (45,47,49):
-        o=origs[i]; w=S[i]['w']; h=7; found=None
-        for py in range(len(P)-h+1):
-            for px in range(S[0]['w']-w+1):
-                if all(P[py+y][px+x]==o[y][x] for y in range(h) for x in range(w)):
-                    found=(px,py); break
-            if found: break
-        assert found,i
-        px,py=found
-        for y in range(h):
-            for x in range(w): P[py+y][px+x]=S[i]['rows'][y][x]
+            rows[oy+TOFF+py][left+px-ox]= selgrad[py] if sel else 8
+        if sel:
+            arrow=[(0,0),(0,1),(1,1),(0,2),(1,2),(2,2),(0,3),(1,3),(0,4)]
+            for ax,ay in arrow:
+                yy=oy+TOFF+2+ay; c=selgrad[2+ay]
+                rows[yy][left-5+ax-ox]=c
+                rows[yy][left+tw+4-ax-ox]=c
+    for k,t in enumerate(texts): put(P,0,BANDS[k],t,False)
+    for k,t in enumerate(texts):
+        for sel,idx in ((True,44+2*k),(False,45+2*k)):
+            band=[clean[BANDS[k]+y][:] for y in range(BH)]
+            put(band,0,0,t,sel)
+            rw=((BW+1)//2+1)//2*2*2
+            rows=[[band[y][BX+x] for x in range(BW)]+[0]*(rw-BW) for y in range(BH)]
+            S[idx]['rows']=rows; S[idx]['h']=BH
     # rebuild
     ends=offs[1:]+[len(d)]
     blobs=[enc(s) if k in (0,44,45,46,47,48,49) else d[offs[k]:ends[k]] for k,s in enumerate(S)]
