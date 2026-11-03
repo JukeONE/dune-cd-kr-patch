@@ -1,7 +1,11 @@
-# Dune CD 한글패치
+# 듄(Dune) CD 한글패치
 
-1992년 Cryo Interactive / Virgin Games의 **Dune (CD 버전)** 한글패치입니다.
-DOSBox Staging으로 바로 실행되는 런처가 함께 들어 있습니다.
+1992년 Cryo Interactive / Virgin Games의 어드벤처·전략 게임 **듄(Dune) CD 버전** 한글패치입니다.
+대사·메뉴·인트로 자막을 모두 한국어로 옮겼고, DOSBox Staging으로 바로 실행되는 런처가 함께 들어 있습니다.
+
+> Korean translation patch for **Dune (1992, Cryo Interactive) CD version** — 듄 CD 한글판, 듄 1 한글패치
+
+**[⬇ 최신 패치 내려받기 (Releases)](https://github.com/JukeONE/dune-cd-kr-patch/releases)**
 
 ## 필요 사항
 
@@ -9,8 +13,8 @@ Dune CD 버전이 필요합니다.
 
 ## 설치
 
-1. 이 저장소를 내려받아(Code → Download ZIP) 압축을 풉니다.
-2. 안의 파일과 폴더를 모두 Dune CD 게임 폴더(`dune.dat`, `dncdprg.exe`가 있는 폴더)에 복사합니다.
+1. [Releases](https://github.com/JukeONE/dune-cd-kr-patch/releases)에서 `Dune_CD_KR_Patch_v*.zip`을 내려받습니다.
+2. Dune CD 게임 폴더(`dune.dat`, `dncdprg.exe`가 있는 폴더)에 압축을 풉니다.
 3. `Korean_Install.bat`을 실행합니다.
 4. `Dune_Play.bat`으로 게임을 실행합니다.
    - 처음 실행할 때 DOSBox Staging을 자동으로 내려받습니다(약 30MB, 1회).
